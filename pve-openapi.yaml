@@ -1,7 +1,7 @@
 info:
-    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2025-12-01T04:42:11Z (source PVE 9.x). Paths/params are best-effort; regenerate after upgrades.
+    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-05-15T05:11:30Z. Paths/params are best-effort; regenerate after upgrades.
     title: Proxmox VE API (generated from apidoc.js)
-    version: 9.x-latest
+    version: generated
 openapi: 3.0.3
 paths:
     /access:
@@ -3075,6 +3075,13 @@ paths:
                   schema:
                     description: Verify ticket, and check if user have access 'privs' on 'path'
                     type: string
+                - description: Verify that the ticket is valid for this port.
+                  in: query
+                  name: port
+                  required: false
+                  schema:
+                    description: Verify that the ticket is valid for this port.
+                    type: integer
                 - description: Verify ticket, and check if user have access 'privs' on 'path'
                   in: query
                   name: privs
@@ -3101,6 +3108,9 @@ paths:
                                 path:
                                     description: Verify ticket, and check if user have access 'privs' on 'path'
                                     type: string
+                                port:
+                                    description: Verify that the ticket is valid for this port.
+                                    type: integer
                                 privs:
                                     description: Verify ticket, and check if user have access 'privs' on 'path'
                                     format: pve-priv-list
@@ -3491,6 +3501,7 @@ paths:
                                                 - he
                                                 - he_ddns
                                                 - hetzner
+                                                - hetznercloud
                                                 - hexonet
                                                 - hostingde
                                                 - huaweicloud
@@ -3545,6 +3556,7 @@ paths:
                                                 - one
                                                 - online
                                                 - openprovider
+                                                - openprovider_rest
                                                 - openstack
                                                 - opnsense
                                                 - ovh
@@ -3563,6 +3575,7 @@ paths:
                                                 - selfhost
                                                 - servercow
                                                 - simply
+                                                - spaceship
                                                 - technitium
                                                 - tele3
                                                 - tencent
@@ -3689,6 +3702,7 @@ paths:
                         - he
                         - he_ddns
                         - hetzner
+                        - hetznercloud
                         - hexonet
                         - hostingde
                         - huaweicloud
@@ -3743,6 +3757,7 @@ paths:
                         - one
                         - online
                         - openprovider
+                        - openprovider_rest
                         - openstack
                         - opnsense
                         - ovh
@@ -3761,6 +3776,7 @@ paths:
                         - selfhost
                         - servercow
                         - simply
+                        - spaceship
                         - technitium
                         - tele3
                         - tencent
@@ -3902,6 +3918,7 @@ paths:
                                         - he
                                         - he_ddns
                                         - hetzner
+                                        - hetznercloud
                                         - hexonet
                                         - hostingde
                                         - huaweicloud
@@ -3956,6 +3973,7 @@ paths:
                                         - one
                                         - online
                                         - openprovider
+                                        - openprovider_rest
                                         - openstack
                                         - opnsense
                                         - ovh
@@ -3974,6 +3992,7 @@ paths:
                                         - selfhost
                                         - servercow
                                         - simply
+                                        - spaceship
                                         - technitium
                                         - tele3
                                         - tencent
@@ -4134,6 +4153,7 @@ paths:
                                             - he
                                             - he_ddns
                                             - hetzner
+                                            - hetznercloud
                                             - hexonet
                                             - hostingde
                                             - huaweicloud
@@ -4188,6 +4208,7 @@ paths:
                                             - one
                                             - online
                                             - openprovider
+                                            - openprovider_rest
                                             - openstack
                                             - opnsense
                                             - ovh
@@ -4206,6 +4227,7 @@ paths:
                                             - selfhost
                                             - servercow
                                             - simply
+                                            - spaceship
                                             - technitium
                                             - tele3
                                             - tencent
@@ -4331,6 +4353,7 @@ paths:
                         - he
                         - he_ddns
                         - hetzner
+                        - hetznercloud
                         - hexonet
                         - hostingde
                         - huaweicloud
@@ -4385,6 +4408,7 @@ paths:
                         - one
                         - online
                         - openprovider
+                        - openprovider_rest
                         - openstack
                         - opnsense
                         - ovh
@@ -4403,6 +4427,7 @@ paths:
                         - selfhost
                         - servercow
                         - simply
+                        - spaceship
                         - technitium
                         - tele3
                         - tencent
@@ -4549,6 +4574,7 @@ paths:
                                         - he
                                         - he_ddns
                                         - hetzner
+                                        - hetznercloud
                                         - hexonet
                                         - hostingde
                                         - huaweicloud
@@ -4603,6 +4629,7 @@ paths:
                                         - one
                                         - online
                                         - openprovider
+                                        - openprovider_rest
                                         - openstack
                                         - opnsense
                                         - ovh
@@ -4621,6 +4648,7 @@ paths:
                                         - selfhost
                                         - servercow
                                         - simply
+                                        - spaceship
                                         - technitium
                                         - tele3
                                         - tencent
@@ -4708,9 +4736,186 @@ paths:
                             schema:
                                 items:
                                     properties:
+                                        all:
+                                            description: Backup all known guest systems on this host.
+                                            type: boolean
+                                        bwlimit:
+                                            description: Limit I/O bandwidth (in KiB/s).
+                                            type: integer
+                                        comment:
+                                            description: Description for the Job.
+                                            type: string
+                                        compress:
+                                            description: Compress dump file.
+                                            enum:
+                                                - "0"
+                                                - "1"
+                                                - gzip
+                                                - lzo
+                                                - zstd
+                                            type: string
+                                        dumpdir:
+                                            description: Store resulting files to specified directory.
+                                            type: string
+                                        enabled:
+                                            description: Enable or disable the job.
+                                            type: boolean
+                                        exclude:
+                                            description: Exclude specified guest systems (assumes --all)
+                                            format: pve-vmid-list
+                                            type: string
+                                        exclude-path:
+                                            description: Exclude certain files/directories (shell globs). Paths starting with '/' are anchored to the container's root, other paths match relative to each subdirectory.
+                                            items:
+                                                type: string
+                                            type: array
+                                        fleecing:
+                                            description: Options for backup fleecing (VM only).
+                                            properties:
+                                                enabled:
+                                                    description: Enable backup fleecing. Cache backup data from blocks where new guest writes happen on specified storage instead of copying them directly to the backup target. This can help guest IO performance and even prevent hangs, at the cost of requiring more storage space.
+                                                    type: boolean
+                                                storage:
+                                                    description: Use this storage to storage fleecing images. For efficient space usage, it's best to use a local storage that supports discard and either thin provisioning or sparse files.
+                                                    format: pve-storage-id
+                                                    type: string
+                                            type: object
                                         id:
                                             description: The job ID.
                                             type: string
+                                        ionice:
+                                            description: Set IO priority when using the BFQ scheduler. For snapshot and suspend mode backups of VMs, this only affects the compressor. A value of 8 means the idle priority is used, otherwise the best-effort priority is used with the specified value.
+                                            type: integer
+                                        lockwait:
+                                            description: Maximal time to wait for the global lock (minutes).
+                                            type: integer
+                                        mailnotification:
+                                            description: 'Deprecated: use notification targets/matchers instead. Specify when to send a notification mail'
+                                            enum:
+                                                - always
+                                                - failure
+                                            type: string
+                                        mailto:
+                                            description: 'Deprecated: Use notification targets/matchers instead. Comma-separated list of email addresses or users that should receive email notifications.'
+                                            format: email-or-username-list
+                                            type: string
+                                        maxfiles:
+                                            description: 'Deprecated: use ''prune-backups'' instead. Maximal number of backup files per guest system.'
+                                            type: integer
+                                        mode:
+                                            description: Backup mode.
+                                            enum:
+                                                - snapshot
+                                                - suspend
+                                                - stop
+                                            type: string
+                                        next-run:
+                                            description: UNIX timestamp when this backup job will be executed next
+                                            type: integer
+                                        node:
+                                            description: Only run if executed on this node.
+                                            format: pve-node
+                                            type: string
+                                        notes-template:
+                                            description: Template string for generating notes for the backup(s). It can contain variables which will be replaced by their values. Currently supported are {{cluster}}, {{guestname}}, {{node}}, and {{vmid}}, but more might be added in the future. Needs to be a single line, newline and backslash need to be escaped as '\n' and '\\' respectively.
+                                            type: string
+                                        notification-mode:
+                                            description: Determine which notification system to use. If set to 'legacy-sendmail', vzdump will consider the mailto/mailnotification parameters and send emails to the specified address(es) via the 'sendmail' command. If set to 'notification-system', a notification will be sent via PVE's notification system, and the mailto and mailnotification will be ignored. If set to 'auto' (default setting), an email will be sent if mailto is set, and the notification system will be used if not.
+                                            enum:
+                                                - auto
+                                                - legacy-sendmail
+                                                - notification-system
+                                            type: string
+                                        pbs-change-detection-mode:
+                                            description: PBS mode used to detect file changes and switch encoding format for container backups.
+                                            enum:
+                                                - legacy
+                                                - data
+                                                - metadata
+                                            type: string
+                                        performance:
+                                            description: Other performance-related settings.
+                                            properties:
+                                                max-workers:
+                                                    description: Applies to VMs. Allow up to this many IO workers at the same time.
+                                                    type: integer
+                                                pbs-entries-max:
+                                                    description: Applies to container backups sent to PBS. Limits the number of entries allowed in memory at a given time to avoid unintended OOM situations. Increase it to enable backups of containers with a large amount of files.
+                                                    type: integer
+                                            type: object
+                                        pigz:
+                                            description: Use pigz instead of gzip when N>0. N=1 uses half of cores, N>1 uses N as thread count.
+                                            type: integer
+                                        pool:
+                                            description: Backup all known guest systems included in the specified pool.
+                                            type: string
+                                        protected:
+                                            description: If true, mark backup(s) as protected.
+                                            type: boolean
+                                        prune-backups:
+                                            description: Use these retention options instead of those from the storage configuration.
+                                            properties:
+                                                keep-all:
+                                                    description: Keep all backups. Conflicts with the other options when true.
+                                                    type: boolean
+                                                keep-daily:
+                                                    description: Keep backups for the last <N> different days. If there is morethan one backup for a single day, only the latest one is kept.
+                                                    type: integer
+                                                keep-hourly:
+                                                    description: Keep backups for the last <N> different hours. If there is morethan one backup for a single hour, only the latest one is kept.
+                                                    type: integer
+                                                keep-last:
+                                                    description: Keep the last <N> backups.
+                                                    type: integer
+                                                keep-monthly:
+                                                    description: Keep backups for the last <N> different months. If there is morethan one backup for a single month, only the latest one is kept.
+                                                    type: integer
+                                                keep-weekly:
+                                                    description: Keep backups for the last <N> different weeks. If there is morethan one backup for a single week, only the latest one is kept.
+                                                    type: integer
+                                                keep-yearly:
+                                                    description: Keep backups for the last <N> different years. If there is morethan one backup for a single year, only the latest one is kept.
+                                                    type: integer
+                                            type: object
+                                        quiet:
+                                            description: Be quiet.
+                                            type: boolean
+                                        remove:
+                                            description: Prune older backups according to 'prune-backups'.
+                                            type: boolean
+                                        repeat-missed:
+                                            description: If true, the job will be run as soon as possible if it was missed while the scheduler was not running.
+                                            type: boolean
+                                        schedule:
+                                            description: Backup schedule. The format is a subset of `systemd` calendar events.
+                                            format: pve-calendar-event
+                                            type: string
+                                        script:
+                                            description: Use specified hook script.
+                                            type: string
+                                        stdexcludes:
+                                            description: Exclude temporary files and logs.
+                                            type: boolean
+                                        stop:
+                                            description: Stop running backup jobs on this host.
+                                            type: boolean
+                                        stopwait:
+                                            description: Maximal time to wait until a guest system is stopped (minutes).
+                                            type: integer
+                                        storage:
+                                            description: Store resulting file to this storage.
+                                            format: pve-storage-id
+                                            type: string
+                                        tmpdir:
+                                            description: Store temporary files to specified directory.
+                                            type: string
+                                        vmid:
+                                            description: The ID of the guest system you want to backup.
+                                            format: pve-vmid-list
+                                            type: string
+                                        zstd:
+                                            description: Zstd threads. N=0 uses half of the available cores, if N is set to a value bigger than 0, N is used as thread count.
+                                            type: integer
                                     type: object
                                 type: array
                     description: OK
@@ -4752,12 +4957,12 @@ paths:
                         - lzo
                         - zstd
                     type: string
-                - description: Day of week selection.
+                - description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                   in: query
                   name: dow
                   required: false
                   schema:
-                    description: Day of week selection.
+                    description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                     format: pve-day-of-week-list
                     type: string
                 - description: Store resulting files to specified directory.
@@ -4967,12 +5172,12 @@ paths:
                   schema:
                     description: Use specified hook script.
                     type: string
-                - description: Job Start time.
+                - description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                   in: query
                   name: starttime
                   required: false
                   schema:
-                    description: Job Start time.
+                    description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                     type: string
                 - description: Exclude temporary files and logs.
                   in: query
@@ -5049,7 +5254,7 @@ paths:
                                         - zstd
                                     type: string
                                 dow:
-                                    description: Day of week selection.
+                                    description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                                     format: pve-day-of-week-list
                                     type: string
                                 dumpdir:
@@ -5156,7 +5361,7 @@ paths:
                                     description: Use specified hook script.
                                     type: string
                                 starttime:
-                                    description: Job Start time.
+                                    description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                                     type: string
                                 stdexcludes:
                                     description: Exclude temporary files and logs.
@@ -5271,6 +5476,187 @@ paths:
                     content:
                         application/json:
                             schema:
+                                properties:
+                                    all:
+                                        description: Backup all known guest systems on this host.
+                                        type: boolean
+                                    bwlimit:
+                                        description: Limit I/O bandwidth (in KiB/s).
+                                        type: integer
+                                    comment:
+                                        description: Description for the Job.
+                                        type: string
+                                    compress:
+                                        description: Compress dump file.
+                                        enum:
+                                            - "0"
+                                            - "1"
+                                            - gzip
+                                            - lzo
+                                            - zstd
+                                        type: string
+                                    dumpdir:
+                                        description: Store resulting files to specified directory.
+                                        type: string
+                                    enabled:
+                                        description: Enable or disable the job.
+                                        type: boolean
+                                    exclude:
+                                        description: Exclude specified guest systems (assumes --all)
+                                        format: pve-vmid-list
+                                        type: string
+                                    exclude-path:
+                                        description: Exclude certain files/directories (shell globs). Paths starting with '/' are anchored to the container's root, other paths match relative to each subdirectory.
+                                        items:
+                                            type: string
+                                        type: array
+                                    fleecing:
+                                        description: Options for backup fleecing (VM only).
+                                        properties:
+                                            enabled:
+                                                description: Enable backup fleecing. Cache backup data from blocks where new guest writes happen on specified storage instead of copying them directly to the backup target. This can help guest IO performance and even prevent hangs, at the cost of requiring more storage space.
+                                                type: boolean
+                                            storage:
+                                                description: Use this storage to storage fleecing images. For efficient space usage, it's best to use a local storage that supports discard and either thin provisioning or sparse files.
+                                                format: pve-storage-id
+                                                type: string
+                                        type: object
+                                    id:
+                                        description: The job ID.
+                                        type: string
+                                    ionice:
+                                        description: Set IO priority when using the BFQ scheduler. For snapshot and suspend mode backups of VMs, this only affects the compressor. A value of 8 means the idle priority is used, otherwise the best-effort priority is used with the specified value.
+                                        type: integer
+                                    lockwait:
+                                        description: Maximal time to wait for the global lock (minutes).
+                                        type: integer
+                                    mailnotification:
+                                        description: 'Deprecated: use notification targets/matchers instead. Specify when to send a notification mail'
+                                        enum:
+                                            - always
+                                            - failure
+                                        type: string
+                                    mailto:
+                                        description: 'Deprecated: Use notification targets/matchers instead. Comma-separated list of email addresses or users that should receive email notifications.'
+                                        format: email-or-username-list
+                                        type: string
+                                    maxfiles:
+                                        description: 'Deprecated: use ''prune-backups'' instead. Maximal number of backup files per guest system.'
+                                        type: integer
+                                    mode:
+                                        description: Backup mode.
+                                        enum:
+                                            - snapshot
+                                            - suspend
+                                            - stop
+                                        type: string
+                                    next-run:
+                                        description: UNIX timestamp when this backup job will be executed next
+                                        type: integer
+                                    node:
+                                        description: Only run if executed on this node.
+                                        format: pve-node
+                                        type: string
+                                    notes-template:
+                                        description: Template string for generating notes for the backup(s). It can contain variables which will be replaced by their values. Currently supported are {{cluster}}, {{guestname}}, {{node}}, and {{vmid}}, but more might be added in the future. Needs to be a single line, newline and backslash need to be escaped as '\n' and '\\' respectively.
+                                        type: string
+                                    notification-mode:
+                                        description: Determine which notification system to use. If set to 'legacy-sendmail', vzdump will consider the mailto/mailnotification parameters and send emails to the specified address(es) via the 'sendmail' command. If set to 'notification-system', a notification will be sent via PVE's notification system, and the mailto and mailnotification will be ignored. If set to 'auto' (default setting), an email will be sent if mailto is set, and the notification system will be used if not.
+                                        enum:
+                                            - auto
+                                            - legacy-sendmail
+                                            - notification-system
+                                        type: string
+                                    pbs-change-detection-mode:
+                                        description: PBS mode used to detect file changes and switch encoding format for container backups.
+                                        enum:
+                                            - legacy
+                                            - data
+                                            - metadata
+                                        type: string
+                                    performance:
+                                        description: Other performance-related settings.
+                                        properties:
+                                            max-workers:
+                                                description: Applies to VMs. Allow up to this many IO workers at the same time.
+                                                type: integer
+                                            pbs-entries-max:
+                                                description: Applies to container backups sent to PBS. Limits the number of entries allowed in memory at a given time to avoid unintended OOM situations. Increase it to enable backups of containers with a large amount of files.
+                                                type: integer
+                                        type: object
+                                    pigz:
+                                        description: Use pigz instead of gzip when N>0. N=1 uses half of cores, N>1 uses N as thread count.
+                                        type: integer
+                                    pool:
+                                        description: Backup all known guest systems included in the specified pool.
+                                        type: string
+                                    protected:
+                                        description: If true, mark backup(s) as protected.
+                                        type: boolean
+                                    prune-backups:
+                                        description: Use these retention options instead of those from the storage configuration.
+                                        properties:
+                                            keep-all:
+                                                description: Keep all backups. Conflicts with the other options when true.
+                                                type: boolean
+                                            keep-daily:
+                                                description: Keep backups for the last <N> different days. If there is morethan one backup for a single day, only the latest one is kept.
+                                                type: integer
+                                            keep-hourly:
+                                                description: Keep backups for the last <N> different hours. If there is morethan one backup for a single hour, only the latest one is kept.
+                                                type: integer
+                                            keep-last:
+                                                description: Keep the last <N> backups.
+                                                type: integer
+                                            keep-monthly:
+                                                description: Keep backups for the last <N> different months. If there is morethan one backup for a single month, only the latest one is kept.
+                                                type: integer
+                                            keep-weekly:
+                                                description: Keep backups for the last <N> different weeks. If there is morethan one backup for a single week, only the latest one is kept.
+                                                type: integer
+                                            keep-yearly:
+                                                description: Keep backups for the last <N> different years. If there is morethan one backup for a single year, only the latest one is kept.
+                                                type: integer
+                                        type: object
+                                    quiet:
+                                        description: Be quiet.
+                                        type: boolean
+                                    remove:
+                                        description: Prune older backups according to 'prune-backups'.
+                                        type: boolean
+                                    repeat-missed:
+                                        description: If true, the job will be run as soon as possible if it was missed while the scheduler was not running.
+                                        type: boolean
+                                    schedule:
+                                        description: Backup schedule. The format is a subset of `systemd` calendar events.
+                                        format: pve-calendar-event
+                                        type: string
+                                    script:
+                                        description: Use specified hook script.
+                                        type: string
+                                    stdexcludes:
+                                        description: Exclude temporary files and logs.
+                                        type: boolean
+                                    stop:
+                                        description: Stop running backup jobs on this host.
+                                        type: boolean
+                                    stopwait:
+                                        description: Maximal time to wait until a guest system is stopped (minutes).
+                                        type: integer
+                                    storage:
+                                        description: Store resulting file to this storage.
+                                        format: pve-storage-id
+                                        type: string
+                                    tmpdir:
+                                        description: Store temporary files to specified directory.
+                                        type: string
+                                    vmid:
+                                        description: The ID of the guest system you want to backup.
+                                        format: pve-vmid-list
+                                        type: string
+                                    zstd:
+                                        description: Zstd threads. N=0 uses half of the available cores, if N is set to a value bigger than 0, N is used as thread count.
+                                        type: integer
                                 type: object
                     description: OK
             summary: Read vzdump backup job definition.
@@ -5319,12 +5705,12 @@ paths:
                     description: A list of settings you want to delete.
                     format: pve-configid-list
                     type: string
-                - description: Day of week selection.
+                - description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                   in: query
                   name: dow
                   required: false
                   schema:
-                    description: Day of week selection.
+                    description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                     format: pve-day-of-week-list
                     type: string
                 - description: Store resulting files to specified directory.
@@ -5533,12 +5919,12 @@ paths:
                   schema:
                     description: Use specified hook script.
                     type: string
-                - description: Job Start time.
+                - description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                   in: query
                   name: starttime
                   required: false
                   schema:
-                    description: Job Start time.
+                    description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                     type: string
                 - description: Exclude temporary files and logs.
                   in: query
@@ -5619,7 +6005,7 @@ paths:
                                     format: pve-configid-list
                                     type: string
                                 dow:
-                                    description: Day of week selection.
+                                    description: 'Deprecated: Use ''schedule'' instead. Day of week selection. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                                     format: pve-day-of-week-list
                                     type: string
                                 dumpdir:
@@ -5725,7 +6111,7 @@ paths:
                                     description: Use specified hook script.
                                     type: string
                                 starttime:
-                                    description: Job Start time.
+                                    description: 'Deprecated: Use ''schedule'' instead. Job Start time. ''starttime'' and ''dow'' will be converted into ''schedule'' if used.'
                                     type: string
                                 stdexcludes:
                                     description: Exclude temporary files and logs.
@@ -5847,12 +6233,19 @@ paths:
         post:
             operationId: post_cluster_bulk_action_guest_migrate
             parameters:
-                - description: How many parallel tasks at maximum should be started.
+                - description: Defines the maximum number of tasks running concurrently.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently.
+                    type: integer
+                - description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                   in: query
                   name: maxworkers
                   required: false
                   schema:
-                    description: How many parallel tasks at maximum should be started.
+                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                     type: integer
                 - description: Enable live migration for VMs and restart migration for CTs.
                   in: query
@@ -5892,8 +6285,11 @@ paths:
                     application/json:
                         schema:
                             properties:
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently.
+                                    type: integer
                                 maxworkers:
-                                    description: How many parallel tasks at maximum should be started.
+                                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                                     type: integer
                                 online:
                                     description: Enable live migration for VMs and restart migration for CTs.
@@ -5933,12 +6329,19 @@ paths:
                   schema:
                     description: Makes sure the Guest stops after the timeout.
                     type: boolean
-                - description: How many parallel tasks at maximum should be started.
+                - description: Defines the maximum number of tasks running concurrently.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently.
+                    type: integer
+                - description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                   in: query
                   name: maxworkers
                   required: false
                   schema:
-                    description: How many parallel tasks at maximum should be started.
+                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                     type: integer
                 - description: Default shutdown timeout in seconds if none is configured for the guest.
                   in: query
@@ -5966,8 +6369,11 @@ paths:
                                 force-stop:
                                     description: Makes sure the Guest stops after the timeout.
                                     type: boolean
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently.
+                                    type: integer
                                 maxworkers:
-                                    description: How many parallel tasks at maximum should be started.
+                                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                                     type: integer
                                 timeout:
                                     description: Default shutdown timeout in seconds if none is configured for the guest.
@@ -5993,12 +6399,19 @@ paths:
         post:
             operationId: post_cluster_bulk_action_guest_start
             parameters:
-                - description: How many parallel tasks at maximum should be started.
+                - description: Defines the maximum number of tasks running concurrently.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently.
+                    type: integer
+                - description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                   in: query
                   name: maxworkers
                   required: false
                   schema:
-                    description: How many parallel tasks at maximum should be started.
+                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                     type: integer
                 - description: Default start timeout in seconds. Only valid for VMs. (default depends on the guest configuration).
                   in: query
@@ -6023,8 +6436,11 @@ paths:
                     application/json:
                         schema:
                             properties:
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently.
+                                    type: integer
                                 maxworkers:
-                                    description: How many parallel tasks at maximum should be started.
+                                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                                     type: integer
                                 timeout:
                                     description: Default start timeout in seconds. Only valid for VMs. (default depends on the guest configuration).
@@ -6050,12 +6466,19 @@ paths:
         post:
             operationId: post_cluster_bulk_action_guest_suspend
             parameters:
-                - description: How many parallel tasks at maximum should be started.
+                - description: Defines the maximum number of tasks running concurrently.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently.
+                    type: integer
+                - description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                   in: query
                   name: maxworkers
                   required: false
                   schema:
-                    description: How many parallel tasks at maximum should be started.
+                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                     type: integer
                 - description: The storage for the VM state.
                   in: query
@@ -6088,8 +6511,11 @@ paths:
                     application/json:
                         schema:
                             properties:
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently.
+                                    type: integer
                                 maxworkers:
-                                    description: How many parallel tasks at maximum should be started.
+                                    description: Defines the maximum number of tasks running concurrently. Deprecated, use 'max-workers' instead.
                                     type: integer
                                 statestorage:
                                     description: The storage for the VM state.
@@ -6615,6 +7041,13 @@ paths:
                   schema:
                     description: Node id for this node.
                     type: integer
+                - description: Coefficient used to determine Corosync's token timeout. See the corosync.conf(5) manual for more details.
+                  in: query
+                  name: token-coefficient
+                  required: false
+                  schema:
+                    description: Coefficient used to determine Corosync's token timeout. See the corosync.conf(5) manual for more details.
+                    type: integer
                 - description: Number of votes for this node.
                   in: query
                   name: votes
@@ -6636,6 +7069,9 @@ paths:
                                     type: string
                                 nodeid:
                                     description: Node id for this node.
+                                    type: integer
+                                token-coefficient:
+                                    description: Coefficient used to determine Corosync's token timeout. See the corosync.conf(5) manual for more details.
                                     type: integer
                                 votes:
                                     description: Number of votes for this node.
@@ -9378,19 +9814,19 @@ paths:
                     description: The HA group identifier.
                     format: pve-configid
                     type: string
-                - description: Maximal number of service relocate tries when a service failes to start.
+                - description: Maximal number of resource relocate tries when a resource fails to start.
                   in: query
                   name: max_relocate
                   required: false
                   schema:
-                    description: Maximal number of service relocate tries when a service failes to start.
+                    description: Maximal number of resource relocate tries when a resource fails to start.
                     type: integer
-                - description: Maximal number of tries to restart the service on a node after its start failed.
+                - description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                   in: query
                   name: max_restart
                   required: false
                   schema:
-                    description: Maximal number of tries to restart the service on a node after its start failed.
+                    description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                     type: integer
                 - description: 'HA resource ID. This consists of a resource type followed by a resource specific name, separated with colon (example: vm:100 / ct:100). For virtual machines and containers, you can simply use the VM or CT id as a shortcut (example: 100).'
                   in: query
@@ -9439,10 +9875,10 @@ paths:
                                     format: pve-configid
                                     type: string
                                 max_relocate:
-                                    description: Maximal number of service relocate tries when a service failes to start.
+                                    description: Maximal number of resource relocate tries when a resource fails to start.
                                     type: integer
                                 max_restart:
-                                    description: Maximal number of tries to restart the service on a node after its start failed.
+                                    description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                                     type: integer
                                 sid:
                                     description: 'HA resource ID. This consists of a resource type followed by a resource specific name, separated with colon (example: vm:100 / ct:100). For virtual machines and containers, you can simply use the VM or CT id as a shortcut (example: 100).'
@@ -9532,7 +9968,7 @@ paths:
                                         format: pve-configid
                                         type: string
                                     max_relocate:
-                                        description: Maximal number of service relocate tries when a service failes to start.
+                                        description: Maximal number of service relocate tries when a service fails to start.
                                         type: integer
                                     max_restart:
                                         description: Maximal number of tries to restart the service on a node after its start failed.
@@ -9596,19 +10032,19 @@ paths:
                     description: The HA group identifier.
                     format: pve-configid
                     type: string
-                - description: Maximal number of service relocate tries when a service failes to start.
+                - description: Maximal number of resource relocate tries when a resource fails to start.
                   in: query
                   name: max_relocate
                   required: false
                   schema:
-                    description: Maximal number of service relocate tries when a service failes to start.
+                    description: Maximal number of resource relocate tries when a resource fails to start.
                     type: integer
-                - description: Maximal number of tries to restart the service on a node after its start failed.
+                - description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                   in: query
                   name: max_restart
                   required: false
                   schema:
-                    description: Maximal number of tries to restart the service on a node after its start failed.
+                    description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                     type: integer
                 - description: 'HA resource ID. This consists of a resource type followed by a resource specific name, separated with colon (example: vm:100 / ct:100). For virtual machines and containers, you can simply use the VM or CT id as a shortcut (example: 100).'
                   in: path
@@ -9654,10 +10090,10 @@ paths:
                                     format: pve-configid
                                     type: string
                                 max_relocate:
-                                    description: Maximal number of service relocate tries when a service failes to start.
+                                    description: Maximal number of resource relocate tries when a resource fails to start.
                                     type: integer
                                 max_restart:
-                                    description: Maximal number of tries to restart the service on a node after its start failed.
+                                    description: Maximal number of tries to restart the resource on a node after its start failed. When reached, the HA manager will try to relocate the resource to an eligible node.
                                     type: integer
                                 sid:
                                     description: 'HA resource ID. This consists of a resource type followed by a resource specific name, separated with colon (example: vm:100 / ct:100). For virtual machines and containers, you can simply use the VM or CT id as a shortcut (example: 100).'
@@ -9818,7 +10254,7 @@ paths:
                                         type: string
                                 type: object
                     description: OK
-            summary: Request resource relocatzion to another node. This stops the service on the old node, and restarts it on the target node.
+            summary: Request resource relocation to another node. This stops the service on the old node, and restarts it on the target node.
     /cluster/ha/rules:
         get:
             operationId: get_cluster_ha_rules
@@ -10176,6 +10612,18 @@ paths:
                                 type: array
                     description: OK
             summary: Directory index.
+    /cluster/ha/status/arm-ha:
+        post:
+            operationId: post_cluster_ha_status_arm_ha
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                nullable: true
+                                type: object
+                    description: OK
+            summary: Request re-arming the HA stack after it was disarmed.
     /cluster/ha/status/current:
         get:
             operationId: get_cluster_ha_status_current
@@ -10186,6 +10634,14 @@ paths:
                             schema:
                                 items:
                                     properties:
+                                        armed-state:
+                                            description: For type 'fencing'. Whether HA is armed, on standby, disarming or disarmed.
+                                            enum:
+                                                - armed
+                                                - standby
+                                                - disarming
+                                                - disarmed
+                                            type: string
                                         crm_state:
                                             description: For type 'service'. Service state as seen by the CRM.
                                             type: string
@@ -10210,6 +10666,12 @@ paths:
                                         request_state:
                                             description: For type 'service'. Requested service state.
                                             type: string
+                                        resource_mode:
+                                            description: For type 'fencing'. How resources are handled while disarmed.
+                                            enum:
+                                                - freeze
+                                                - ignore
+                                            type: string
                                         sid:
                                             description: For type 'service'. Service ID.
                                             type: string
@@ -10229,10 +10691,46 @@ paths:
                                                 - master
                                                 - lrm
                                                 - service
+                                                - fencing
                                     type: object
                                 type: array
                     description: OK
-            summary: Get HA manger status.
+            summary: Get HA manager status.
+    /cluster/ha/status/disarm-ha:
+        post:
+            operationId: post_cluster_ha_status_disarm_ha
+            parameters:
+                - description: 'Controls how HA managed resources are handled while disarmed. The current state of resources is not affected. ''freeze'': new commands and state changes are not applied. ''ignore'': resources are removed from HA tracking and can be managed as if they were not HA managed.'
+                  in: query
+                  name: resource-mode
+                  required: false
+                  schema:
+                    description: 'Controls how HA managed resources are handled while disarmed. The current state of resources is not affected. ''freeze'': new commands and state changes are not applied. ''ignore'': resources are removed from HA tracking and can be managed as if they were not HA managed.'
+                    enum:
+                        - freeze
+                        - ignore
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                resource-mode:
+                                    description: 'Controls how HA managed resources are handled while disarmed. The current state of resources is not affected. ''freeze'': new commands and state changes are not applied. ''ignore'': resources are removed from HA tracking and can be managed as if they were not HA managed.'
+                                    enum:
+                                        - freeze
+                                        - ignore
+                                    type: string
+                            type: object
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                nullable: true
+                                type: object
+                    description: OK
+            summary: Request disarming the HA stack, releasing all watchdogs cluster-wide.
     /cluster/ha/status/manager_status:
         get:
             operationId: get_cluster_ha_status_manager_status
@@ -10243,7 +10741,7 @@ paths:
                             schema:
                                 type: object
                     description: OK
-            summary: Get full HA manger status, including LRM status.
+            summary: Get full HA manager status, including LRM status.
     /cluster/jobs:
         get:
             operationId: get_cluster_jobs
@@ -15089,6 +15587,9 @@ paths:
                                         sdn:
                                             description: The name of an SDN entity (for type 'sdn')
                                             type: string
+                                        shared:
+                                            description: Determines whether the storage is shared
+                                            type: boolean
                                         status:
                                             description: Resource type dependent status.
                                             type: string
@@ -15154,12 +15655,12 @@ paths:
                   schema:
                     description: the token for unlocking the global SDN configuration
                     type: string
-                - description: When lock-token has been provided and configuration successfully commited, release the lock automatically afterwards
+                - description: When lock-token has been provided and configuration successfully committed, release the lock automatically afterwards
                   in: query
                   name: release-lock
                   required: false
                   schema:
-                    description: When lock-token has been provided and configuration successfully commited, release the lock automatically afterwards
+                    description: When lock-token has been provided and configuration successfully committed, release the lock automatically afterwards
                     type: boolean
             requestBody:
                 content:
@@ -15170,7 +15671,7 @@ paths:
                                     description: the token for unlocking the global SDN configuration
                                     type: string
                                 release-lock:
-                                    description: When lock-token has been provided and configuration successfully commited, release the lock automatically afterwards
+                                    description: When lock-token has been provided and configuration successfully committed, release the lock automatically afterwards
                                     type: boolean
                             type: object
             responses:
@@ -15951,8 +16452,8 @@ paths:
                                 url:
                                     type: string
                             required:
-                                - key
                                 - url
+                                - key
                             type: object
             responses:
                 "200":
@@ -16114,6 +16615,33 @@ paths:
                                 type: object
                     description: OK
             summary: Update sdn dns object configuration.
+    /cluster/sdn/dry-run:
+        get:
+            operationId: get_cluster_sdn_dry_run
+            parameters:
+                - description: The cluster node name.
+                  in: query
+                  name: node
+                  required: false
+                  schema:
+                    description: The cluster node name.
+                    format: pve-node
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                properties:
+                                    frr-diff:
+                                        description: The difference between the current and pending FRR configuration.
+                                        type: string
+                                    interfaces-diff:
+                                        description: The difference between the current and pending /etc/network/interfaces.d/sdn configuration.
+                                        type: string
+                                type: object
+                    description: OK
+            summary: Dry-run the SDN apply action and return the difference between the current configuration and the pending configuration
     /cluster/sdn/fabrics:
         get:
             operationId: get_cluster_sdn_fabrics
@@ -21147,6 +21675,16 @@ paths:
         get:
             operationId: get_nodes_node_capabilities_qemu_cpu
             parameters:
+                - description: Virtual processor architecture. Defaults to the host architecture.
+                  in: query
+                  name: arch
+                  required: false
+                  schema:
+                    description: Virtual processor architecture. Defaults to the host architecture.
+                    enum:
+                        - x86_64
+                        - aarch64
+                    type: string
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -21179,6 +21717,16 @@ paths:
         get:
             operationId: get_nodes_node_capabilities_qemu_cpu_flags
             parameters:
+                - description: Virtual processor architecture. Defaults to the host architecture.
+                  in: query
+                  name: arch
+                  required: false
+                  schema:
+                    description: Virtual processor architecture. Defaults to the host architecture.
+                    enum:
+                        - x86_64
+                        - aarch64
+                    type: string
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -21208,6 +21756,16 @@ paths:
         get:
             operationId: get_nodes_node_capabilities_qemu_machines
             parameters:
+                - description: Virtual processor architecture. Defaults to the host architecture.
+                  in: query
+                  name: arch
+                  required: false
+                  schema:
+                    description: Virtual processor architecture. Defaults to the host architecture.
+                    enum:
+                        - x86_64
+                        - aarch64
+                    type: string
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -25733,8 +26291,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
@@ -29604,8 +30162,8 @@ paths:
                                     format: pve-vmid
                                     type: integer
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -34497,6 +35055,9 @@ paths:
                                 properties:
                                     cert:
                                         type: string
+                                    password:
+                                        description: Password used for authentication within the VNC protocol. Consists of printable ASCII characters ('!' .. '~').
+                                        type: string
                                     port:
                                         type: integer
                                     ticket:
@@ -34559,10 +35120,17 @@ paths:
             parameters:
                 - description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!
                   in: query
-                  name: maxworkers
+                  name: max-workers
                   required: false
                   schema:
                     description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!
+                    type: integer
+                - description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!Deprecated, use 'max-workers' instead.
+                  in: query
+                  name: maxworkers
+                  required: false
+                  schema:
+                    description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!Deprecated, use 'max-workers' instead.
                     type: integer
                 - description: The cluster node name.
                   in: path
@@ -34600,8 +35168,11 @@ paths:
                     application/json:
                         schema:
                             properties:
-                                maxworkers:
+                                max-workers:
                                     description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!
+                                    type: integer
+                                maxworkers:
+                                    description: Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg. One of both must be set!Deprecated, use 'max-workers' instead.
                                     type: integer
                                 node:
                                     description: The cluster node name.
@@ -35885,10 +36456,10 @@ paths:
                                             description: Maximum memory in bytes.
                                             type: integer
                                         mem:
-                                            description: Currently used memory in bytes.
+                                            description: Currently used memory in bytes. Does not take into account kernel same-page merging (KSM). Uses information from ballooning when available.
                                             type: integer
                                         memhost:
-                                            description: Current memory usage on the host.
+                                            description: Current memory usage on the host. Does not take into account kernel same-page merging (KSM).
                                             type: integer
                                         name:
                                             description: VM (host)name.
@@ -35995,12 +36566,12 @@ paths:
                     description: Secure Encrypted Virtualization (SEV) features by AMD CPUs
                     format: pve-qemu-sev-fmt
                     type: string
-                - description: Virtual processor architecture. Defaults to the host.
+                - description: Virtual processor architecture. Defaults to the host architecture.
                   in: query
                   name: arch
                   required: false
                   schema:
-                    description: Virtual processor architecture. Defaults to the host.
+                    description: Virtual processor architecture. Defaults to the host architecture.
                     enum:
                         - x86_64
                         - aarch64
@@ -36033,12 +36604,12 @@ paths:
                   schema:
                     description: Automatic restart after crash (currently ignored).
                     type: boolean
-                - description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                - description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                   in: query
                   name: balloon
                   required: false
                   schema:
-                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                     type: integer
                 - description: Select BIOS implementation.
                   in: query
@@ -36378,12 +36949,12 @@ paths:
                   schema:
                     description: Memory properties.
                     type: string
-                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                   in: query
                   name: migrate_downtime
                   required: false
                   schema:
-                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                     type: number
                 - description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
                   in: query
@@ -36757,7 +37328,7 @@ paths:
                                     format: pve-qemu-sev-fmt
                                     type: string
                                 arch:
-                                    description: Virtual processor architecture. Defaults to the host.
+                                    description: Virtual processor architecture. Defaults to the host architecture.
                                     enum:
                                         - x86_64
                                         - aarch64
@@ -36775,7 +37346,7 @@ paths:
                                     description: Automatic restart after crash (currently ignored).
                                     type: boolean
                                 balloon:
-                                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                                     type: integer
                                 bios:
                                     description: Select BIOS implementation.
@@ -36958,7 +37529,7 @@ paths:
                                     description: Memory properties.
                                     type: string
                                 migrate_downtime:
-                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                                     type: number
                                 migrate_speed:
                                     description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
@@ -37477,6 +38048,20 @@ paths:
         get:
             operationId: get_nodes_node_qemu_vmid_agent_file_read
             parameters:
+                - description: Number of bytes to read.
+                  in: query
+                  name: count
+                  required: false
+                  schema:
+                    description: Number of bytes to read.
+                    type: integer
+                - description: Data received from the QEMU Guest-Agent is base64 encoded. If this is set to true, the data is decoded. Otherwise the content is forwarded with base64 encoding. Defaults to true.
+                  in: query
+                  name: decode
+                  required: false
+                  schema:
+                    description: Data received from the QEMU Guest-Agent is base64 encoded. If this is set to true, the data is decoded. Otherwise the content is forwarded with base64 encoding. Defaults to true.
+                    type: boolean
                 - description: The path to the file
                   in: query
                   name: file
@@ -37492,6 +38077,13 @@ paths:
                     description: The cluster node name.
                     format: pve-node
                     type: string
+                - description: Offset to start reading at
+                  in: query
+                  name: offset
+                  required: false
+                  schema:
+                    description: Offset to start reading at
+                    type: integer
                 - description: The (unique) ID of the VM.
                   in: path
                   name: vmid
@@ -37511,7 +38103,7 @@ paths:
                                         description: The content of the file, maximum 16777216
                                         type: string
                                     truncated:
-                                        description: If set to 1, the output is truncated and not complete
+                                        description: If set to 1, the read did not reach the end of the file.
                                         type: boolean
                                 type: object
                     description: OK
@@ -38714,7 +39306,7 @@ paths:
                                         format: pve-qemu-sev-fmt
                                         type: string
                                     arch:
-                                        description: Virtual processor architecture. Defaults to the host.
+                                        description: Virtual processor architecture. Defaults to the host architecture.
                                         enum:
                                             - x86_64
                                             - aarch64
@@ -38729,7 +39321,7 @@ paths:
                                         description: Automatic restart after crash (currently ignored).
                                         type: boolean
                                     balloon:
-                                        description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                                        description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                                         type: integer
                                     bios:
                                         description: Select BIOS implementation.
@@ -38902,7 +39494,7 @@ paths:
                                         description: Some (read-only) meta-information about this guest.
                                         type: string
                                     migrate_downtime:
-                                        description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                                        description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                                         type: number
                                     migrate_speed:
                                         description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
@@ -39114,12 +39706,12 @@ paths:
                     description: Secure Encrypted Virtualization (SEV) features by AMD CPUs
                     format: pve-qemu-sev-fmt
                     type: string
-                - description: Virtual processor architecture. Defaults to the host.
+                - description: Virtual processor architecture. Defaults to the host architecture.
                   in: query
                   name: arch
                   required: false
                   schema:
-                    description: Virtual processor architecture. Defaults to the host.
+                    description: Virtual processor architecture. Defaults to the host architecture.
                     enum:
                         - x86_64
                         - aarch64
@@ -39152,12 +39744,12 @@ paths:
                   schema:
                     description: Time to wait for the task to finish. We return 'null' if the task finish within that time.
                     type: integer
-                - description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                - description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                   in: query
                   name: balloon
                   required: false
                   schema:
-                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                     type: integer
                 - description: Select BIOS implementation.
                   in: query
@@ -39491,12 +40083,12 @@ paths:
                   schema:
                     description: Memory properties.
                     type: string
-                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                   in: query
                   name: migrate_downtime
                   required: false
                   schema:
-                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                     type: number
                 - description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
                   in: query
@@ -39855,7 +40447,7 @@ paths:
                                     format: pve-qemu-sev-fmt
                                     type: string
                                 arch:
-                                    description: Virtual processor architecture. Defaults to the host.
+                                    description: Virtual processor architecture. Defaults to the host architecture.
                                     enum:
                                         - x86_64
                                         - aarch64
@@ -39873,7 +40465,7 @@ paths:
                                     description: Time to wait for the task to finish. We return 'null' if the task finish within that time.
                                     type: integer
                                 balloon:
-                                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                                     type: integer
                                 bios:
                                     description: Select BIOS implementation.
@@ -40054,7 +40646,7 @@ paths:
                                     description: Memory properties.
                                     type: string
                                 migrate_downtime:
-                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                                     type: number
                                 migrate_speed:
                                     description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
@@ -40267,12 +40859,12 @@ paths:
                     description: Secure Encrypted Virtualization (SEV) features by AMD CPUs
                     format: pve-qemu-sev-fmt
                     type: string
-                - description: Virtual processor architecture. Defaults to the host.
+                - description: Virtual processor architecture. Defaults to the host architecture.
                   in: query
                   name: arch
                   required: false
                   schema:
-                    description: Virtual processor architecture. Defaults to the host.
+                    description: Virtual processor architecture. Defaults to the host architecture.
                     enum:
                         - x86_64
                         - aarch64
@@ -40298,12 +40890,12 @@ paths:
                   schema:
                     description: Automatic restart after crash (currently ignored).
                     type: boolean
-                - description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                - description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                   in: query
                   name: balloon
                   required: false
                   schema:
-                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                     type: integer
                 - description: Select BIOS implementation.
                   in: query
@@ -40629,12 +41221,12 @@ paths:
                   schema:
                     description: Memory properties.
                     type: string
-                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                - description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                   in: query
                   name: migrate_downtime
                   required: false
                   schema:
-                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                     type: number
                 - description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
                   in: query
@@ -40993,7 +41585,7 @@ paths:
                                     format: pve-qemu-sev-fmt
                                     type: string
                                 arch:
-                                    description: Virtual processor architecture. Defaults to the host.
+                                    description: Virtual processor architecture. Defaults to the host architecture.
                                     enum:
                                         - x86_64
                                         - aarch64
@@ -41008,7 +41600,7 @@ paths:
                                     description: Automatic restart after crash (currently ignored).
                                     type: boolean
                                 balloon:
-                                    description: Amount of target RAM for the VM in MiB. Using zero disables the ballon driver.
+                                    description: Amount of target RAM for the VM in MiB. The balloon driver is enabled by default, unless it is explicitly disabled by setting the value to zero.
                                     type: integer
                                 bios:
                                     description: Select BIOS implementation.
@@ -41185,7 +41777,7 @@ paths:
                                     description: Memory properties.
                                     type: string
                                 migrate_downtime:
-                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge.
+                                    description: Set maximum tolerated downtime (in seconds) for migrations. Should the migration not be able to converge in the very end, because too much newly dirtied RAM needs to be transferred, the limit will be increased automatically step-by-step until migration can converge. Will be capped to 2000 seconds (maximum in QEMU).
                                     type: number
                                 migrate_speed:
                                     description: Set maximum speed (in MB/s) for migrations. Value 0 is no limit.
@@ -46305,10 +46897,10 @@ paths:
                                         description: Maximum memory in bytes.
                                         type: integer
                                     mem:
-                                        description: Currently used memory in bytes.
+                                        description: Currently used memory in bytes. Does not take into account kernel same-page merging (KSM). Uses information from ballooning when available.
                                         type: integer
                                     memhost:
-                                        description: Current memory usage on the host.
+                                        description: Current memory usage on the host. Does not take into account kernel same-page merging (KSM).
                                         type: integer
                                     name:
                                         description: VM (host)name.
@@ -47268,12 +47860,12 @@ paths:
         post:
             operationId: post_nodes_node_qemu_vmid_vncproxy
             parameters:
-                - description: Generates a random password to be used as ticket instead of the API ticket.
+                - description: Deprecated, do not use. Password is generated when required.
                   in: query
                   name: generate-password
                   required: false
                   schema:
-                    description: Generates a random password to be used as ticket instead of the API ticket.
+                    description: Deprecated, do not use. Password is generated when required.
                     type: boolean
                 - description: The cluster node name.
                   in: path
@@ -47304,7 +47896,7 @@ paths:
                         schema:
                             properties:
                                 generate-password:
-                                    description: Generates a random password to be used as ticket instead of the API ticket.
+                                    description: Deprecated, do not use. Password is generated when required.
                                     type: boolean
                                 node:
                                     description: The cluster node name.
@@ -47327,7 +47919,7 @@ paths:
                                     cert:
                                         type: string
                                     password:
-                                        description: Returned if requested with 'generate-password' param. Consists of printable ASCII characters ('!' .. '~').
+                                        description: Password used for authentication within the VNC protocol. Consists of printable ASCII characters ('!' .. '~').
                                         type: string
                                     port:
                                         type: integer
@@ -49252,6 +49844,13 @@ paths:
                   schema:
                     description: Issue start command even if virtual guest have 'onboot' not set or set to off.
                     type: boolean
+                - description: Defines the maximum number of tasks running concurrently. If not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently. If not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                    type: integer
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -49276,6 +49875,9 @@ paths:
                                 force:
                                     description: Issue start command even if virtual guest have 'onboot' not set or set to off.
                                     type: boolean
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently. If not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                                    type: integer
                                 node:
                                     description: The cluster node name.
                                     format: pve-node
@@ -49457,6 +50059,13 @@ paths:
                   schema:
                     description: Force a hard-stop after the timeout.
                     type: boolean
+                - description: Defines the maximum number of tasks running concurrently. If  not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: Defines the maximum number of tasks running concurrently. If  not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                    type: integer
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -49488,6 +50097,9 @@ paths:
                                 force-stop:
                                     description: Force a hard-stop after the timeout.
                                     type: boolean
+                                max-workers:
+                                    description: Defines the maximum number of tasks running concurrently. If  not set, uses 'max_workers' from datacenter.cfg, and if that's not set, the available CPU threads, clamped to a maximum of 8, are used.
+                                    type: integer
                                 node:
                                     description: The cluster node name.
                                     format: pve-node
@@ -51053,6 +51665,17 @@ paths:
         post:
             operationId: post_nodes_node_suspendall
             parameters:
+                - description: |-
+                    Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg, and if that's not set the available'
+                                        .' CPU threads, clamped to a maximum of 8, are used.
+                  in: query
+                  name: max-workers
+                  required: false
+                  schema:
+                    description: |-
+                        Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg, and if that's not set the available'
+                                            .' CPU threads, clamped to a maximum of 8, are used.
+                    type: integer
                 - description: The cluster node name.
                   in: path
                   name: node
@@ -51074,6 +51697,11 @@ paths:
                     application/json:
                         schema:
                             properties:
+                                max-workers:
+                                    description: |-
+                                        Maximal number of parallel migration job. If not set, uses'max_workers' from datacenter.cfg, and if that's not set the available'
+                                                            .' CPU threads, clamped to a maximum of 8, are used.
+                                    type: integer
                                 node:
                                     description: The cluster node name.
                                     format: pve-node
@@ -51693,6 +52321,9 @@ paths:
                                 properties:
                                     cert:
                                         type: string
+                                    password:
+                                        description: Password used for authentication within the VNC protocol. Consists of printable ASCII characters ('!' .. '~').
+                                        type: string
                                     port:
                                         type: integer
                                     ticket:
@@ -51716,19 +52347,19 @@ paths:
                     description: The cluster node name.
                     format: pve-node
                     type: string
-                - description: Port number returned by previous vncproxy call.
+                - description: Port number returned by previous 'vncshell' call.
                   in: query
                   name: port
                   required: false
                   schema:
-                    description: Port number returned by previous vncproxy call.
+                    description: Port number returned by previous 'vncshell' call.
                     type: integer
-                - description: Ticket from previous call to vncproxy.
+                - description: Ticket from previous call to 'vncshell'.
                   in: query
                   name: vncticket
                   required: false
                   schema:
-                    description: Ticket from previous call to vncproxy.
+                    description: Ticket from previous call to 'vncshell'.
                     type: string
             responses:
                 "200":
