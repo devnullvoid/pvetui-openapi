@@ -1,5 +1,5 @@
 info:
-    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-06-08T02:12:55Z. Paths/params are best-effort; regenerate after upgrades.
+    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-07-03T18:01:00Z. Paths/params are best-effort; regenerate after upgrades.
     title: Proxmox VE API (generated from apidoc.js)
     version: generated
 openapi: 3.0.3
@@ -7890,8 +7890,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
@@ -9072,8 +9072,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -10332,8 +10332,8 @@ paths:
                                         - resource-affinity
                                     type: string
                             required:
-                                - resources
                                 - rule
+                                - resources
                             type: object
             responses:
                 "200":
@@ -17657,8 +17657,8 @@ paths:
                                 url:
                                     type: string
                             required:
-                                - key
                                 - url
+                                - key
                             type: object
             responses:
                 "200":
@@ -28995,8 +28995,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -46290,8 +46290,8 @@ paths:
                                     format: pve-vmid
                                     type: integer
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
