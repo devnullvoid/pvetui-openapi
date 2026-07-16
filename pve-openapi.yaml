@@ -1,5 +1,5 @@
 info:
-    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-07-03T18:01:00Z. Paths/params are best-effort; regenerate after upgrades.
+    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-07-16T13:03:05Z. Paths/params are best-effort; regenerate after upgrades.
     title: Proxmox VE API (generated from apidoc.js)
     version: generated
 openapi: 3.0.3
@@ -7890,8 +7890,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -9072,8 +9072,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
@@ -10332,8 +10332,8 @@ paths:
                                         - resource-affinity
                                     type: string
                             required:
-                                - rule
                                 - resources
+                                - rule
                             type: object
             responses:
                 "200":
@@ -17657,8 +17657,8 @@ paths:
                                 url:
                                     type: string
                             required:
-                                - url
                                 - key
+                                - url
                             type: object
             responses:
                 "200":
@@ -21352,8 +21352,8 @@ paths:
                                     description: The SDN vnet object identifier.
                                     type: string
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -28995,8 +28995,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
