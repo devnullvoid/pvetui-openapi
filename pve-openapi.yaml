@@ -1,5 +1,5 @@
 info:
-    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-07-16T13:03:05Z. Paths/params are best-effort; regenerate after upgrades.
+    description: Generated from https://pve.proxmox.com/pve-docs/api-viewer/apidoc.js on 2026-10-03T08:19:47Z. Paths/params are best-effort; regenerate after upgrades.
     title: Proxmox VE API (generated from apidoc.js)
     version: generated
 openapi: 3.0.3
@@ -6818,6 +6818,91 @@ paths:
                                 type: object
                     description: OK
             summary: Set or clear (unset) a specific Ceph flag. Runs synchronously (unlike the bulk PUT /cluster/ceph/flags endpoint, which forks a worker task).
+    /cluster/ceph/health-mute:
+        get:
+            operationId: get_cluster_ceph_health_mute
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    properties:
+                                        code:
+                                            description: The muted health check.
+                                            type: string
+                                        sticky:
+                                            description: Whether the mute survives the check getting worse.
+                                            type: boolean
+                                        summary:
+                                            description: What the check reports.
+                                            type: string
+                                        ttl:
+                                            description: When the mute expires. Absent if it does not.
+                                            type: string
+                                    type: object
+                                type: array
+                    description: OK
+            summary: Get the currently muted Ceph health checks.
+    /cluster/ceph/health-mute/{code}:
+        put:
+            operationId: put_cluster_ceph_health_mute_code
+            parameters:
+                - description: The health check to mute, as reported by 'ceph health', for example 'AUTH_INSECURE_CLIENT_KEY_TYPE'.
+                  in: path
+                  name: code
+                  required: true
+                  schema:
+                    description: The health check to mute, as reported by 'ceph health', for example 'AUTH_INSECURE_CLIENT_KEY_TYPE'.
+                    type: string
+                - description: Keep the mute even when the check gets worse. Without this a mute clears itself as soon as the number of affected items grows, which brings the check back to attention. Only used when muting.
+                  in: query
+                  name: sticky
+                  required: false
+                  schema:
+                    description: Keep the mute even when the check gets worse. Without this a mute clears itself as soon as the number of affected items grows, which brings the check back to attention. Only used when muting.
+                    type: boolean
+                - description: How long the mute lasts, for example '2h', '3d' or '1w'. Without it the mute has no expiry. Only used when muting.
+                  in: query
+                  name: ttl
+                  required: false
+                  schema:
+                    description: How long the mute lasts, for example '2h', '3d' or '1w'. Without it the mute has no expiry. Only used when muting.
+                    type: string
+                - description: Whether to mute (true) or unmute (false) the check.
+                  in: query
+                  name: value
+                  required: false
+                  schema:
+                    description: Whether to mute (true) or unmute (false) the check.
+                    type: boolean
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                code:
+                                    description: The health check to mute, as reported by 'ceph health', for example 'AUTH_INSECURE_CLIENT_KEY_TYPE'.
+                                    type: string
+                                sticky:
+                                    description: Keep the mute even when the check gets worse. Without this a mute clears itself as soon as the number of affected items grows, which brings the check back to attention. Only used when muting.
+                                    type: boolean
+                                ttl:
+                                    description: How long the mute lasts, for example '2h', '3d' or '1w'. Without it the mute has no expiry. Only used when muting.
+                                    type: string
+                                value:
+                                    description: Whether to mute (true) or unmute (false) the check.
+                                    type: boolean
+                            type: object
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                nullable: true
+                                type: object
+                    description: OK
+            summary: Mute or unmute a Ceph health check. A muted check no longer counts towards the cluster status, but stays visible and keeps being evaluated.
     /cluster/ceph/metadata:
         get:
             operationId: get_cluster_ceph_metadata
@@ -6903,6 +6988,84 @@ paths:
                                 type: object
                     description: OK
             summary: Get ceph metadata.
+    /cluster/ceph/restart-bulk:
+        post:
+            operationId: post_cluster_ceph_restart_bulk
+            parameters:
+                - description: Log the plan (which daemons would be restarted, in what order) without actually doing anything.
+                  in: query
+                  name: dry-run
+                  required: false
+                  schema:
+                    description: Log the plan (which daemons would be restarted, in what order) without actually doing anything.
+                    type: boolean
+                - description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                  in: query
+                  name: force
+                  required: false
+                  schema:
+                    description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                    type: boolean
+                - description: 'OSDs only: restart only OSDs whose running version differs from the locally-installed ceph-osd binary on their host. Forwarded to each per-node sub-task so the per-host installed version is used (a partial upgrade where one host is on a newer build is handled correctly).'
+                  in: query
+                  name: only-outdated
+                  required: false
+                  schema:
+                    description: 'OSDs only: restart only OSDs whose running version differs from the locally-installed ceph-osd binary on their host. Forwarded to each per-node sub-task so the per-host installed version is used (a partial upgrade where one host is on a newer build is handled correctly).'
+                    type: boolean
+                - description: Ceph daemon type to restart cluster-wide.
+                  in: query
+                  name: service-type
+                  required: false
+                  schema:
+                    description: Ceph daemon type to restart cluster-wide.
+                    enum:
+                        - mon
+                        - mgr
+                        - mds
+                        - osd
+                    type: string
+                - description: 'Per-daemon timeout (in seconds) for the up-wait phase. Note: for daemons on remote nodes the same timeout also bounds the remote restart task, so the per-daemon budget can be up to 2x this value. Default sized for slow MDS journal replay or MON paxos settle on busy clusters; bump higher if the cluster routinely takes longer to stabilize after a daemon restart.'
+                  in: query
+                  name: timeout
+                  required: false
+                  schema:
+                    description: 'Per-daemon timeout (in seconds) for the up-wait phase. Note: for daemons on remote nodes the same timeout also bounds the remote restart task, so the per-daemon budget can be up to 2x this value. Default sized for slow MDS journal replay or MON paxos settle on busy clusters; bump higher if the cluster routinely takes longer to stabilize after a daemon restart.'
+                    type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                dry-run:
+                                    description: Log the plan (which daemons would be restarted, in what order) without actually doing anything.
+                                    type: boolean
+                                force:
+                                    description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                                    type: boolean
+                                only-outdated:
+                                    description: 'OSDs only: restart only OSDs whose running version differs from the locally-installed ceph-osd binary on their host. Forwarded to each per-node sub-task so the per-host installed version is used (a partial upgrade where one host is on a newer build is handled correctly).'
+                                    type: boolean
+                                service-type:
+                                    description: Ceph daemon type to restart cluster-wide.
+                                    enum:
+                                        - mon
+                                        - mgr
+                                        - mds
+                                        - osd
+                                    type: string
+                                timeout:
+                                    description: 'Per-daemon timeout (in seconds) for the up-wait phase. Note: for daemons on remote nodes the same timeout also bounds the remote restart task, so the per-daemon budget can be up to 2x this value. Default sized for slow MDS journal replay or MON paxos settle on busy clusters; bump higher if the cluster routinely takes longer to stabilize after a daemon restart.'
+                                    type: integer
+                            type: object
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: OK
+            summary: Cluster-wide rolling restart of all Ceph daemons of the given type. For MON/MGR/MDS each daemon is restarted only after Ceph reports the previous one is back up and the next one is safe to stop. For OSDs the cluster path orchestrates the per-node endpoint at /nodes/{node}/ceph/restart-bulk on each node in turn, inheriting that endpoint's per-OSD 'noout' handling and resume support. The 'noout' flag itself is not exposed by this endpoint as it is OSD-specific (and for OSDs handled by the per-node sub-tasks).
     /cluster/ceph/status:
         get:
             operationId: get_cluster_ceph_status
@@ -7358,6 +7521,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Alias name.
                   in: query
@@ -7376,6 +7540,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: Alias name.
@@ -7451,6 +7616,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -7483,6 +7649,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -7514,6 +7681,7 @@ paths:
                                 items:
                                     properties:
                                         comment:
+                                            description: Optional comment or description.
                                             type: string
                                         digest:
                                             description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -7533,6 +7701,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -7561,6 +7730,7 @@ paths:
                         schema:
                             properties:
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -7693,6 +7863,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -7824,6 +7995,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -7890,8 +8062,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
@@ -8033,6 +8205,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -8179,6 +8352,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -8291,6 +8465,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -8319,6 +8494,7 @@ paths:
                         schema:
                             properties:
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -8412,6 +8588,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: IP set name.
                   in: path
@@ -8436,6 +8613,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: IP set name.
@@ -8529,6 +8707,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -8560,6 +8739,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -8784,14 +8964,19 @@ paths:
                                 items:
                                     properties:
                                         comment:
+                                            description: Optional comment or description.
                                             type: string
                                         name:
+                                            description: The name of the alias or ipset.
                                             type: string
                                         ref:
+                                            description: The reference string used in firewall rules.
                                             type: string
                                         scope:
+                                            description: The scope of the reference (e.g., SDN).
                                             type: string
                                         type:
+                                            description: The type of reference (alias or ipset).
                                             enum:
                                                 - alias
                                                 - ipset
@@ -8885,6 +9070,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -9009,6 +9195,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -9072,8 +9259,8 @@ paths:
                                         - group
                                     type: string
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -9201,6 +9388,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -9340,6 +9528,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -10227,114 +10416,6 @@ paths:
             summary: Get HA rules.
         post:
             operationId: post_cluster_ha_rules
-            parameters:
-                - description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                  in: query
-                  name: affinity
-                  required: false
-                  schema:
-                    description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                    enum:
-                        - positive
-                        - negative
-                    type: string
-                - description: HA rule description.
-                  in: query
-                  name: comment
-                  required: false
-                  schema:
-                    description: HA rule description.
-                    type: string
-                - description: Whether the HA rule is disabled.
-                  in: query
-                  name: disable
-                  required: false
-                  schema:
-                    description: Whether the HA rule is disabled.
-                    type: boolean
-                - description: List of cluster node names with optional priority.
-                  in: query
-                  name: nodes
-                  required: false
-                  schema:
-                    description: List of cluster node names with optional priority.
-                    format: pve-ha-node-list
-                    type: string
-                - description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                  in: query
-                  name: resources
-                  required: true
-                  schema:
-                    description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                    format: pve-ha-resource-id-list
-                    type: string
-                - description: HA rule identifier.
-                  in: query
-                  name: rule
-                  required: true
-                  schema:
-                    description: HA rule identifier.
-                    format: pve-configid
-                    type: string
-                - description: Describes whether the node affinity rule is strict or non-strict.
-                  in: query
-                  name: strict
-                  required: false
-                  schema:
-                    description: Describes whether the node affinity rule is strict or non-strict.
-                    type: boolean
-                - description: HA rule type.
-                  in: query
-                  name: type
-                  required: false
-                  schema:
-                    description: HA rule type.
-                    enum:
-                        - node-affinity
-                        - resource-affinity
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            properties:
-                                affinity:
-                                    description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                                    enum:
-                                        - positive
-                                        - negative
-                                    type: string
-                                comment:
-                                    description: HA rule description.
-                                    type: string
-                                disable:
-                                    description: Whether the HA rule is disabled.
-                                    type: boolean
-                                nodes:
-                                    description: List of cluster node names with optional priority.
-                                    format: pve-ha-node-list
-                                    type: string
-                                resources:
-                                    description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                                    format: pve-ha-resource-id-list
-                                    type: string
-                                rule:
-                                    description: HA rule identifier.
-                                    format: pve-configid
-                                    type: string
-                                strict:
-                                    description: Describes whether the node affinity rule is strict or non-strict.
-                                    type: boolean
-                                type:
-                                    description: HA rule type.
-                                    enum:
-                                        - node-affinity
-                                        - resource-affinity
-                                    type: string
-                            required:
-                                - resources
-                                - rule
-                            type: object
             responses:
                 "200":
                     content:
@@ -10397,135 +10478,6 @@ paths:
             summary: Read HA rule.
         put:
             operationId: put_cluster_ha_rules_rule
-            parameters:
-                - description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                  in: query
-                  name: affinity
-                  required: false
-                  schema:
-                    description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                    enum:
-                        - positive
-                        - negative
-                    type: string
-                - description: HA rule description.
-                  in: query
-                  name: comment
-                  required: false
-                  schema:
-                    description: HA rule description.
-                    type: string
-                - description: A list of settings you want to delete.
-                  in: query
-                  name: delete
-                  required: false
-                  schema:
-                    description: A list of settings you want to delete.
-                    format: pve-configid-list
-                    type: string
-                - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
-                  in: query
-                  name: digest
-                  required: false
-                  schema:
-                    description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
-                    type: string
-                - description: Whether the HA rule is disabled.
-                  in: query
-                  name: disable
-                  required: false
-                  schema:
-                    description: Whether the HA rule is disabled.
-                    type: boolean
-                - description: List of cluster node names with optional priority.
-                  in: query
-                  name: nodes
-                  required: false
-                  schema:
-                    description: List of cluster node names with optional priority.
-                    format: pve-ha-node-list
-                    type: string
-                - description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                  in: query
-                  name: resources
-                  required: false
-                  schema:
-                    description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                    format: pve-ha-resource-id-list
-                    type: string
-                - description: HA rule identifier.
-                  in: path
-                  name: rule
-                  required: true
-                  schema:
-                    description: HA rule identifier.
-                    format: pve-configid
-                    type: string
-                - description: Describes whether the node affinity rule is strict or non-strict.
-                  in: query
-                  name: strict
-                  required: false
-                  schema:
-                    description: Describes whether the node affinity rule is strict or non-strict.
-                    type: boolean
-                - description: HA rule type.
-                  in: query
-                  name: type
-                  required: false
-                  schema:
-                    description: HA rule type.
-                    enum:
-                        - node-affinity
-                        - resource-affinity
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            properties:
-                                affinity:
-                                    description: Describes whether the HA resources are supposed to be kept on the same node ('positive'), or are supposed to be kept on separate nodes ('negative').
-                                    enum:
-                                        - positive
-                                        - negative
-                                    type: string
-                                comment:
-                                    description: HA rule description.
-                                    type: string
-                                delete:
-                                    description: A list of settings you want to delete.
-                                    format: pve-configid-list
-                                    type: string
-                                digest:
-                                    description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
-                                    type: string
-                                disable:
-                                    description: Whether the HA rule is disabled.
-                                    type: boolean
-                                nodes:
-                                    description: List of cluster node names with optional priority.
-                                    format: pve-ha-node-list
-                                    type: string
-                                resources:
-                                    description: 'List of HA resource IDs. This consists of a list of resource types followed by a resource specific name separated with a colon (example: vm:100,ct:101).'
-                                    format: pve-ha-resource-id-list
-                                    type: string
-                                rule:
-                                    description: HA rule identifier.
-                                    format: pve-configid
-                                    type: string
-                                strict:
-                                    description: Describes whether the node affinity rule is strict or non-strict.
-                                    type: boolean
-                                type:
-                                    description: HA rule type.
-                                    enum:
-                                        - node-affinity
-                                        - resource-affinity
-                                    type: string
-                            required:
-                                - rule
-                            type: object
             responses:
                 "200":
                     content:
@@ -14615,6 +14567,154 @@ paths:
                     content:
                         application/json:
                             schema:
+                                properties:
+                                    allowed-tags:
+                                        description: The tags the current user is allowed to set and see.
+                                        items:
+                                            description: A tag.
+                                            type: string
+                                        type: array
+                                    bwlimit:
+                                        description: Set I/O bandwidth limit for various operations (in KiB/s).
+                                        type: string
+                                    consent-text:
+                                        description: Consent text that is displayed before logging in.
+                                        type: string
+                                    console:
+                                        description: Select the default Console viewer. You can either use the builtin java applet (VNC; deprecated and maps to html5), an external virt-viewer comtatible application (SPICE), an HTML5 based vnc viewer (noVNC), or an HTML5 based console client (xtermjs). If the selected viewer is not available (e.g. SPICE not activated for the VM), the fallback is noVNC.
+                                        enum:
+                                            - applet
+                                            - vv
+                                            - html5
+                                            - xtermjs
+                                        type: string
+                                    crs:
+                                        description: Cluster resource scheduling settings.
+                                        type: string
+                                    description:
+                                        description: Datacenter description. Shown in the web-interface datacenter notes panel. This is saved as comment inside the configuration file.
+                                        type: string
+                                    email_from:
+                                        description: Specify email address to send notification from (default is root@$hostname)
+                                        format: email-opt
+                                        type: string
+                                    fencing:
+                                        description: |-
+                                            Set the fencing mode of the HA cluster. Hardware mode needs a valid configuration of fence devices in /etc/pve/ha/fence.cfg. With both all two modes are used.
+
+                                            WARNING: 'hardware' and 'both' are EXPERIMENTAL & WIP
+                                        enum:
+                                            - watchdog
+                                            - hardware
+                                            - both
+                                        type: string
+                                    ha:
+                                        description: Cluster wide HA settings.
+                                        type: string
+                                    http_proxy:
+                                        description: 'Specify external http proxy which is used for downloads (example: ''http://username:password@host:port/'')'
+                                        type: string
+                                    keyboard:
+                                        description: Default keybord layout for vnc server.
+                                        enum:
+                                            - de
+                                            - de-ch
+                                            - da
+                                            - en-gb
+                                            - en-us
+                                            - es
+                                            - fi
+                                            - fr
+                                            - fr-be
+                                            - fr-ca
+                                            - fr-ch
+                                            - hu
+                                            - is
+                                            - it
+                                            - ja
+                                            - lt
+                                            - mk
+                                            - nl
+                                            - "no"
+                                            - pl
+                                            - pt
+                                            - pt-br
+                                            - sv
+                                            - sl
+                                            - tr
+                                        type: string
+                                    language:
+                                        description: Default GUI language.
+                                        enum:
+                                            - ar
+                                            - ca
+                                            - da
+                                            - de
+                                            - en
+                                            - es
+                                            - eu
+                                            - fa
+                                            - fr
+                                            - hr
+                                            - he
+                                            - it
+                                            - ja
+                                            - ka
+                                            - kr
+                                            - nb
+                                            - nl
+                                            - nn
+                                            - pl
+                                            - pt_BR
+                                            - ru
+                                            - sl
+                                            - sv
+                                            - tr
+                                            - ukr
+                                            - zh_CN
+                                            - zh_TW
+                                        type: string
+                                    location:
+                                        description: The location of the cluster.
+                                        format: pve-node-location
+                                        type: string
+                                    mac_prefix:
+                                        description: Prefix for the auto-generated MAC addresses of virtual guests. The default 'BC:24:11' is the OUI assigned by the IEEE to Proxmox Server Solutions GmbH for a 24-bit large MAC block. You're allowed to use this in local networks, i.e., those not directly reachable by the public (e.g., in a LAN or behind NAT).
+                                        format: mac-prefix
+                                        type: string
+                                    max_workers:
+                                        description: Defines how many workers (per node) are maximal started  on actions like 'stopall VMs' or task from the ha-manager.
+                                        type: integer
+                                    migration:
+                                        description: For cluster wide migration settings.
+                                        type: string
+                                    migration_unsecure:
+                                        description: Migration is secure using SSH tunnel by default. For secure private networks you can disable it to speed up migration. Deprecated, use the 'migration' property instead!
+                                        type: boolean
+                                    next-id:
+                                        description: Control the range for the free VMID auto-selection pool.
+                                        type: string
+                                    notify:
+                                        description: Cluster-wide notification settings.
+                                        type: string
+                                    registered-tags:
+                                        description: A list of tags that require a `Sys.Modify` on '/' to set and delete. Tags set here that are also in 'user-tag-access' also require `Sys.Modify`.
+                                        type: string
+                                    replication:
+                                        description: For cluster wide replication settings.
+                                        type: string
+                                    tag-style:
+                                        description: Tag style options.
+                                        type: string
+                                    u2f:
+                                        description: u2f
+                                        type: string
+                                    user-tag-access:
+                                        description: Privilege options for user-settable tags
+                                        type: string
+                                    webauthn:
+                                        description: webauthn configuration
+                                        type: string
                                 type: object
                     description: OK
             summary: Get datacenter options. Without 'Sys.Audit' on '/' not all options are returned.
@@ -14782,6 +14882,7 @@ paths:
                   required: false
                   schema:
                     description: The location of the cluster.
+                    format: pve-node-location
                     type: string
                 - description: Prefix for the auto-generated MAC addresses of virtual guests. The default 'BC:24:11' is the OUI assigned by the IEEE to Proxmox Server Solutions GmbH for a 24-bit large MAC block. You're allowed to use this in local networks, i.e., those not directly reachable by the public (e.g., in a LAN or behind NAT).
                   in: query
@@ -14979,6 +15080,7 @@ paths:
                                     type: string
                                 location:
                                     description: The location of the cluster.
+                                    format: pve-node-location
                                     type: string
                                 mac_prefix:
                                     description: Prefix for the auto-generated MAC addresses of virtual guests. The default 'BC:24:11' is the OUI assigned by the IEEE to Proxmox Server Solutions GmbH for a 24-bit large MAC block. You're allowed to use this in local networks, i.e., those not directly reachable by the public (e.g., in a LAN or behind NAT).
@@ -21155,6 +21257,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -21286,6 +21389,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -21352,8 +21456,8 @@ paths:
                                     description: The SDN vnet object identifier.
                                     type: string
                             required:
-                                - type
                                 - action
+                                - type
                             type: object
             responses:
                 "200":
@@ -21495,6 +21599,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -21641,6 +21746,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -24976,12 +25082,12 @@ paths:
         post:
             operationId: post_nodes_node_ceph_mds_name
             parameters:
-                - description: Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources.
+                - description: 'Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources. Deprecated: the setting was removed in Ceph 14.1.1.'
                   in: query
                   name: hotstandby
                   required: false
                   schema:
-                    description: Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources.
+                    description: 'Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources. Deprecated: the setting was removed in Ceph 14.1.1.'
                     type: boolean
                 - description: The ID for the mds, when omitted the same as the nodename
                   in: path
@@ -25004,7 +25110,7 @@ paths:
                         schema:
                             properties:
                                 hotstandby:
-                                    description: Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources.
+                                    description: 'Determines whether a ceph-mds daemon should poll and replay the log of an active MDS. Faster switch on MDS failure, but needs more idle resources. Deprecated: the setting was removed in Ceph 14.1.1.'
                                     type: boolean
                                 name:
                                     description: The ID for the mds, when omitted the same as the nodename
@@ -26332,6 +26438,44 @@ paths:
                                 type: object
                     description: OK
             summary: Show the current pool status.
+    /nodes/{node}/ceph/releases:
+        get:
+            operationId: get_nodes_node_ceph_releases
+            parameters:
+                - description: The cluster node name.
+                  in: path
+                  name: node
+                  required: true
+                  schema:
+                    description: The cluster node name.
+                    format: pve-node
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    properties:
+                                        available:
+                                            description: Whether this release can be installed on this node, that is, it has packages for the node's architecture and current Proxmox VE release.
+                                            type: boolean
+                                        is-default:
+                                            description: Whether this is the release recommended for new installations.
+                                            type: boolean
+                                        release:
+                                            description: The Ceph release code name, for example 'squid'.
+                                            type: string
+                                        unsupported:
+                                            description: Whether this release is not (yet) supported for production use.
+                                            type: boolean
+                                        version:
+                                            description: The Ceph release major version, for example '19.2'.
+                                            type: string
+                                    type: object
+                                type: array
+                    description: OK
+            summary: List all known Ceph releases, marking which ones can be installed on this node.
     /nodes/{node}/ceph/restart:
         post:
             operationId: post_nodes_node_ceph_restart
@@ -26372,6 +26516,110 @@ paths:
                                 type: string
                     description: OK
             summary: Restart ceph services.
+    /nodes/{node}/ceph/restart-bulk:
+        post:
+            operationId: post_nodes_node_ceph_restart_bulk
+            parameters:
+                - description: Log the plan (which OSDs would be restarted, in what order) without actually doing anything.
+                  in: query
+                  name: dry-run
+                  required: false
+                  schema:
+                    description: Log the plan (which OSDs would be restarted, in what order) without actually doing anything.
+                    type: boolean
+                - description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                  in: query
+                  name: force
+                  required: false
+                  schema:
+                    description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                    type: boolean
+                - description: The cluster node name.
+                  in: path
+                  name: node
+                  required: true
+                  schema:
+                    description: The cluster node name.
+                    format: pve-node
+                    type: string
+                - description: Restart only OSDs whose running version differs from the locally-installed ceph-osd binary. Useful for post-upgrade rolling restarts that should touch only daemons that need it. Refuses if the local binary version cannot be determined. Ignored on resume (the saved plan is used as-is).
+                  in: query
+                  name: only-outdated
+                  required: false
+                  schema:
+                    description: Restart only OSDs whose running version differs from the locally-installed ceph-osd binary. Useful for post-upgrade rolling restarts that should touch only daemons that need it. Refuses if the local binary version cannot be determined. Ignored on resume (the saved plan is used as-is).
+                    type: boolean
+                - description: Resume an aborted bulk-restart from the checkpoint stored in Ceph's config-key store. The plan and noout decision from the prior run are honored; 'set-noout' is ignored. When false (default), the endpoint refuses to start if a checkpoint exists for this node, to avoid silently overwriting in-progress work.
+                  in: query
+                  name: resume
+                  required: false
+                  schema:
+                    description: Resume an aborted bulk-restart from the checkpoint stored in Ceph's config-key store. The plan and noout decision from the prior run are honored; 'set-noout' is ignored. When false (default), the endpoint refuses to start if a checkpoint exists for this node, to avoid silently overwriting in-progress work.
+                    type: boolean
+                - description: Ceph daemon type to restart. Only OSDs can be rolling-restarted on a per-node basis.
+                  in: query
+                  name: service-type
+                  required: false
+                  schema:
+                    description: Ceph daemon type to restart. Only OSDs can be rolling-restarted on a per-node basis.
+                    enum:
+                        - osd
+                    type: string
+                - description: Set the 'noout' flag on each OSD targeted by this run for the duration of the rolling restart, and unset it on completion. Per-OSD rather than cluster-wide so that unrelated OSDs failing on other nodes still trigger backfill normally.
+                  in: query
+                  name: set-noout
+                  required: false
+                  schema:
+                    description: Set the 'noout' flag on each OSD targeted by this run for the duration of the rolling restart, and unset it on completion. Per-OSD rather than cluster-wide so that unrelated OSDs failing on other nodes still trigger backfill normally.
+                    type: boolean
+                - description: Per-OSD timeout (in seconds). Bounds both the wait for a restarted OSD to come back up and the wait for recovery to quiesce enough that Ceph reports the next OSD safe to stop. Default sized for busy clusters where multi-TB OSDs with many PGs can need several minutes to clear peering after a restart; bump higher for very large or heavily-loaded OSDs.
+                  in: query
+                  name: timeout
+                  required: false
+                  schema:
+                    description: Per-OSD timeout (in seconds). Bounds both the wait for a restarted OSD to come back up and the wait for recovery to quiesce enough that Ceph reports the next OSD safe to stop. Default sized for busy clusters where multi-TB OSDs with many PGs can need several minutes to clear peering after a restart; bump higher for very large or heavily-loaded OSDs.
+                    type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            properties:
+                                dry-run:
+                                    description: Log the plan (which OSDs would be restarted, in what order) without actually doing anything.
+                                    type: boolean
+                                force:
+                                    description: Proceed past a HEALTH_WARN with non-benign checks like PG_DEGRADED, SLOW_OPS, or MON_DOWN. A blocking HEALTH_ERR is fatal regardless of this flag. Checks that ceph reports as muted, and checks known to be harmless for a rolling restart, never block and are named in the task log. The cluster-wide OSD map flags are only ever evaluated for an OSD restart, since they govern nothing a mon, mgr or mds restart touches. The operator is responsible for confirming the cluster is stable enough to absorb a rolling restart.
+                                    type: boolean
+                                node:
+                                    description: The cluster node name.
+                                    format: pve-node
+                                    type: string
+                                only-outdated:
+                                    description: Restart only OSDs whose running version differs from the locally-installed ceph-osd binary. Useful for post-upgrade rolling restarts that should touch only daemons that need it. Refuses if the local binary version cannot be determined. Ignored on resume (the saved plan is used as-is).
+                                    type: boolean
+                                resume:
+                                    description: Resume an aborted bulk-restart from the checkpoint stored in Ceph's config-key store. The plan and noout decision from the prior run are honored; 'set-noout' is ignored. When false (default), the endpoint refuses to start if a checkpoint exists for this node, to avoid silently overwriting in-progress work.
+                                    type: boolean
+                                service-type:
+                                    description: Ceph daemon type to restart. Only OSDs can be rolling-restarted on a per-node basis.
+                                    enum:
+                                        - osd
+                                    type: string
+                                set-noout:
+                                    description: Set the 'noout' flag on each OSD targeted by this run for the duration of the rolling restart, and unset it on completion. Per-OSD rather than cluster-wide so that unrelated OSDs failing on other nodes still trigger backfill normally.
+                                    type: boolean
+                                timeout:
+                                    description: Per-OSD timeout (in seconds). Bounds both the wait for a restarted OSD to come back up and the wait for recovery to quiesce enough that Ceph reports the next OSD safe to stop. Default sized for busy clusters where multi-TB OSDs with many PGs can need several minutes to clear peering after a restart; bump higher for very large or heavily-loaded OSDs.
+                                    type: integer
+                            type: object
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                    description: OK
+            summary: Rolling restart of all Ceph OSDs on this node. Each OSD is restarted only after Ceph reports the previous one is back up and the next one is safe to stop. For non-OSD Ceph daemons, use the cluster-wide endpoint at /cluster/ceph/restart-bulk. The 'noout' flag is applied only to the OSDs targeted by this run, so unrelated OSDs on other nodes that fail during the restart window still get out-marked normally. Aborting the resulting task (for example via 'pvesh task stop') triggers a SIGTERM handler that unsets the per-OSD 'noout' if this endpoint set it. Per-daemon progress is checkpointed in Ceph's config-key store ('pve/ceph-bulk-restart/node/<node>'), so an aborted run can be resumed by re-issuing this endpoint with 'resume=1'.
     /nodes/{node}/ceph/rules:
         get:
             operationId: get_nodes_node_ceph_rules
@@ -26884,6 +27132,7 @@ paths:
                                         type: string
                                     location:
                                         description: The location of the node. Overrides the default from the datacenter config.
+                                        format: pve-node-location
                                         type: string
                                     startall-onboot-delay:
                                         description: Initial delay in seconds, before starting all the Virtual Guests with on-boot enabled.
@@ -26946,6 +27195,7 @@ paths:
                   required: false
                   schema:
                     description: The location of the node. Overrides the default from the datacenter config.
+                    format: pve-node-location
                     type: string
                 - description: The cluster node name.
                   in: path
@@ -26995,6 +27245,7 @@ paths:
                                     type: string
                                 location:
                                     description: The location of the node. Overrides the default from the datacenter config.
+                                    format: pve-node-location
                                     type: string
                                 node:
                                     description: The cluster node name.
@@ -28796,6 +29047,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -28928,6 +29180,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -29140,6 +29393,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -29287,6 +29541,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -29673,6 +29928,20 @@ paths:
                   schema:
                     description: End before the given Cursor. Conflicts with 'until'
                     type: string
+                - description: Also return a record listing the distinct syslog identifiers present, for filter completion. Only honored together with 'structured'.
+                  in: query
+                  name: identifiers
+                  required: false
+                  schema:
+                    description: Also return a record listing the distinct syslog identifiers present, for filter completion. Only honored together with 'structured'.
+                    type: boolean
+                - description: Only print kernel messages.
+                  in: query
+                  name: kernel
+                  required: false
+                  schema:
+                    description: Only print kernel messages.
+                    type: boolean
                 - description: Limit to the last X lines. Conflicts with a range.
                   in: query
                   name: lastentries
@@ -29688,6 +29957,20 @@ paths:
                     description: The cluster node name.
                     format: pve-node
                     type: string
+                - description: 'Only print messages of this syslog priority: a single level from 0 (emerg) to 7 (debug), selecting that level and everything more severe, or a ''LOW..HIGH'' range. Empty means no priority filter.'
+                  in: query
+                  name: priority
+                  required: false
+                  schema:
+                    description: 'Only print messages of this syslog priority: a single level from 0 (emerg) to 7 (debug), selecting that level and everything more severe, or a ''LOW..HIGH'' range. Empty means no priority filter.'
+                    type: string
+                - description: Only print messages whose syslog identifier matches this glob, for example 'pve*' or 'postfix/*'.
+                  in: query
+                  name: service
+                  required: false
+                  schema:
+                    description: Only print messages whose syslog identifier matches this glob, for example 'pve*' or 'postfix/*'.
+                    type: string
                 - description: Display all log since this UNIX epoch. Conflicts with 'startcursor'.
                   in: query
                   name: since
@@ -29702,6 +29985,27 @@ paths:
                   schema:
                     description: Start after the given Cursor. Conflicts with 'since'
                     type: string
+                - description: Return one JSON object per entry with separate fields (timestamp, identifier, message, priority, ...) instead of pre-rendered text lines.
+                  in: query
+                  name: structured
+                  required: false
+                  schema:
+                    description: Return one JSON object per entry with separate fields (timestamp, identifier, message, priority, ...) instead of pre-rendered text lines.
+                    type: boolean
+                - description: Only print messages of this systemd unit (the .service suffix is implied).
+                  in: query
+                  name: unit
+                  required: false
+                  schema:
+                    description: Only print messages of this systemd unit (the .service suffix is implied).
+                    type: string
+                - description: Also return a record listing the distinct systemd units present, for filter completion. Only honored together with 'structured'.
+                  in: query
+                  name: units
+                  required: false
+                  schema:
+                    description: Also return a record listing the distinct systemd units present, for filter completion. Only honored together with 'structured'.
+                    type: boolean
                 - description: Display all log until this UNIX epoch. Conflicts with 'endcursor'.
                   in: query
                   name: until
@@ -31433,6 +31737,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Alias name.
                   in: query
@@ -31467,6 +31772,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: Alias name.
@@ -31582,6 +31888,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -31630,6 +31937,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -31705,6 +32013,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -31749,6 +32058,7 @@ paths:
                         schema:
                             properties:
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -31882,6 +32192,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: IP set name.
                   in: path
@@ -31922,6 +32233,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: IP set name.
@@ -32055,6 +32367,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -32102,6 +32415,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -32655,6 +32969,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -32795,6 +33110,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -32866,8 +33182,8 @@ paths:
                                     format: pve-vmid
                                     type: integer
                             required:
-                                - action
                                 - type
+                                - action
                             type: object
             responses:
                 "200":
@@ -33027,6 +33343,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -33182,6 +33499,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -41683,12 +42001,12 @@ paths:
                   schema:
                     description: Description for the new VM.
                     type: string
-                - description: Target format for file storage. Only valid for full clone.
+                - description: Target disk format. Only valid for full clone. If the target storage does not support the format, the storage's default format is used instead.
                   in: query
                   name: format
                   required: false
                   schema:
-                    description: Target format for file storage. Only valid for full clone.
+                    description: Target disk format. Only valid for full clone. If the target storage does not support the format, the storage's default format is used instead.
                     enum:
                         - raw
                         - qcow2
@@ -41777,7 +42095,7 @@ paths:
                                     description: Description for the new VM.
                                     type: string
                                 format:
-                                    description: Target format for file storage. Only valid for full clone.
+                                    description: Target disk format. Only valid for full clone. If the target storage does not support the format, the storage's default format is used instead.
                                     enum:
                                         - raw
                                         - qcow2
@@ -44857,6 +45175,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Alias name.
                   in: query
@@ -44891,6 +45210,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: Alias name.
@@ -45006,6 +45326,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -45054,6 +45375,7 @@ paths:
                                     format: IPorCIDR
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -45129,6 +45451,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -45173,6 +45496,7 @@ paths:
                         schema:
                             properties:
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -45306,6 +45630,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: IP set name.
                   in: path
@@ -45346,6 +45671,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 name:
                                     description: IP set name.
@@ -45479,6 +45805,7 @@ paths:
                   name: comment
                   required: false
                   schema:
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
                   in: query
@@ -45526,6 +45853,7 @@ paths:
                                     format: IPorCIDRorAlias
                                     type: string
                                 comment:
+                                    format: pve-fw-comment-spec
                                     type: string
                                 digest:
                                     description: Prevent changes if current configuration file has a different digest. This can be used to prevent concurrent modifications.
@@ -46079,6 +46407,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
                   in: query
@@ -46219,6 +46548,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 dest:
                                     description: Restrict packet destination address. This can refer to a single IP address, an IP set ('+ipsetname') or an IP alias definition. You can also specify an address range like '20.34.101.207-201.3.9.99', or a list of IP addresses and networks (entries are separated by comma). Please do not mix IPv4 and IPv6 addresses inside such lists.
@@ -46451,6 +46781,7 @@ paths:
                   required: false
                   schema:
                     description: Descriptive comment.
+                    format: pve-fw-comment-spec
                     type: string
                 - description: A list of settings you want to delete.
                   in: query
@@ -46606,6 +46937,7 @@ paths:
                                     type: string
                                 comment:
                                     description: Descriptive comment.
+                                    format: pve-fw-comment-spec
                                     type: string
                                 delete:
                                     description: A list of settings you want to delete.
@@ -47351,12 +47683,12 @@ paths:
                         - unused254
                         - unused255
                     type: string
-                - description: Target Format.
+                - description: Target disk format. Only used when moving to a different storage. If the target storage does not support the format, the storage's default format is used instead.
                   in: query
                   name: format
                   required: false
                   schema:
-                    description: Target Format.
+                    description: Target disk format. Only used when moving to a different storage. If the target storage does not support the format, the storage's default format is used instead.
                     enum:
                         - raw
                         - qcow2
@@ -48058,7 +48390,7 @@ paths:
                                         - unused255
                                     type: string
                                 format:
-                                    description: Target Format.
+                                    description: Target disk format. Only used when moving to a different storage. If the target storage does not support the format, the storage's default format is used instead.
                                     enum:
                                         - raw
                                         - qcow2
@@ -49783,11 +50115,12 @@ paths:
         post:
             operationId: post_nodes_node_qemu_vmid_status_resume
             parameters:
-                - description: ""
+                - description: Do not check whether the VM is running, used internally during migration. Only root may use this option.
                   in: query
                   name: nocheck
                   required: false
                   schema:
+                    description: Do not check whether the VM is running, used internally during migration. Only root may use this option.
                     type: boolean
                 - description: The cluster node name.
                   in: path
@@ -49818,6 +50151,7 @@ paths:
                         schema:
                             properties:
                                 nocheck:
+                                    description: Do not check whether the VM is running, used internally during migration. Only root may use this option.
                                     type: boolean
                                 node:
                                     description: The cluster node name.
